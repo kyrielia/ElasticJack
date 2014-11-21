@@ -42,7 +42,9 @@ def load_yaml(yaml_path):
 def upload_to_s3(file, bucket_name, key_name, region):
     print "Uploading file %s to Amazon S3 bucket '%s' in region '%s'" % (file, bucket_name, region)
     s3 = boto.s3.connect_to_region(region)
+    print "Created s3 client"
     bucket = get_or_create_bucket(s3, bucket_name)
+    print "Got bucket"
     key = boto.s3.key.Key(bucket)
     key.key = key_name
     key.set_contents_from_filename(file, cb=percent_complete, num_cb=10)
