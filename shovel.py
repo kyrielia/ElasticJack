@@ -54,6 +54,7 @@ def get_or_create_bucket(s3, bucket_name):
     return bucket
 
 def application_exists(eb_client, c_name):
+    print "Checking if application with cName '%s' already exists" % c_name
     response = eb_client.check_dns_availability(c_name)
     available = response['CheckDNSAvailabilityResponse']['CheckDNSAvailabilityResult']['Available']
     return not available
