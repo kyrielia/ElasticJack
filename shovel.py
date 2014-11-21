@@ -104,17 +104,26 @@ def wait_for_app(eb_client, app_name, version_label):
 
 # Converts an availability zone
 def get_location(region):
-    return {
-        "ap-northeast-1": Location.APNortheast,
-        "ap-southeast-1": Location.APSoutheast,
-        "ap-southeast-2": Location.APSoutheast2,
-        "cn-north-1": Location.CNNorth1,
-        "eu-west-1": Location.EU,
-        "eu-central-1": Location.EU,
-        "sa-east-1": Location.SAEast,
-        "us-west-1": Location.USWest,
-        "us-west-2": Location.USWest2
-    }.get(region, Location.DEFAULT)
+    if region == "ap-northeast-1":
+        return Location.APNortheast
+    elif region == "ap-southeast-1":
+        return Location.APSoutheast
+    elif region == "ap-southeast-2":
+        return Location.APSoutheast2
+    elif region == "cn-north-1":
+        return Location.CNNorth1
+    elif region == "eu-west-1":
+        return Location.EU
+    elif region == "eu-central-1":
+        return Location.EU
+    elif region == "sa-east-1":
+        return Location.SAEast
+    elif region == "us-west-1":
+        return Location.USWest
+    elif region == "us-west-2":
+        return Location.USWest2
+    else:
+        return Location.DEFAULT
 
 # The callback function in boto requires there to be two params
 def percent_complete(complete, total):
