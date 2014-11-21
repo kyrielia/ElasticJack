@@ -54,7 +54,7 @@ def get_or_create_bucket(bucket_name, region):
     print "Received bucket is %s" % bucket
     if bucket is None:
         print "Bucket does not exist - creating"
-        bucket = s3.create_bucket(bucket_name, get_location(region))
+        bucket = s3.create_bucket(bucket_name, location=get_location(region))
     return bucket
 
 def application_exists(eb_client, c_name):
