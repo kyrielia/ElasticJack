@@ -5,6 +5,7 @@ import time
 import yaml
 from datetime import datetime
 from shovel import task
+from boto.s3.connection import Location
 
 @task
 def deploy(yaml_path, war_path):
@@ -53,7 +54,7 @@ def get_or_create_bucket(s3, bucket_name):
     print "Received bucket is %s" % bucket
     if bucket is None:
         print "Bucket does not exist - creating"
-        bucket = s3.create_bucket(bucket_name)
+        bucket = s3.create_bucket(bucket_name, location=Location.EU)
     return bucket
 
 def application_exists(eb_client, c_name):
