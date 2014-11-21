@@ -36,6 +36,7 @@ def load_yaml(yaml_path):
     file = open(yaml_path, "r")
     doc = str(yaml.load(file))
     doc = doc.replace('$now', now)
+    print doc
     return yaml.load(doc)
 
 def upload_to_s3(file, bucket_name, key_name, region):
