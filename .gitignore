@@ -4,3 +4,4 @@
 .idea/
 *.yaml
 *.pyc
+env/
