@@ -54,7 +54,7 @@ def get_or_create_bucket(bucket_name, region):
     print "Received bucket is %s" % bucket
     if bucket is None:
         print "Bucket does not exist - creating"
-        bucket = s3.create_bucket(bucket_name)
+        bucket = s3.create_bucket(bucket_name, get_location(region))
     return bucket
 
 def application_exists(eb_client, c_name):
@@ -101,6 +101,20 @@ def wait_for_app(eb_client, app_name, version_label):
         print "Application is ready"
     else:
         print "WARNING - application has status %s" % status
+
+# Converts an availability zone
+def get_location(region):
+    return {
+        "ap-northeast-1": Location.APNortheast,
+        "ap-southeast-1": Location.APSoutheast,
+        "ap-southeast-2": Location.APSoutheast2,
+        "cn-north-1": Location.CNNorth1,
+        "eu-west-1": Location.EU,
+        "eu-central-1": Location.EU,
+        "sa-east-1": Location.SAEast,
+        "us-west-1": Location.USWest,
+        "us-west-2": Location.USWest2
+    }.get(region, Location.DEFAULT)
 
 # The callback function in boto requires there to be two params
 def percent_complete(complete, total):
