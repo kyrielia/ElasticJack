@@ -30,7 +30,7 @@ def deploy(yaml_path, war_path):
         print "Could not find application '%s' - creating application" % app_name
         deploy_app(eb_client, app_name, version_label, s3_bucket, s3_key, True)
         create_env(eb_client, app_name, env_name, c_name, version_label, config_template)
-
+    wait_for_app(eb_client, app_name, version_label)
 
 def load_yaml(yaml_path):
     now = datetime.now().strftime('%Y%m%d%H%M%S')
