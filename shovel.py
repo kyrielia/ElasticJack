@@ -91,16 +91,18 @@ def update_app(eb_client, env_name, version_label, template_name):
 def wait_for_app(eb_client, app_name, version_label):
     print "Waiting for application to start"
     status = 'Pending'
-    while status == 'Pending':
+    while status == 'Pending' or status == 'Updating':
         print "..."
         time.sleep(5)
         response = eb_client.describe_environments(application_name=app_name, version_label=version_label)
-        env = response['DescribeEnvironmentsResponse']['DescribeEnvironmentsResult']['Environments'][0]
-        status = env['Status']
+        environments = response['DescribeEnvironmentsResponse']['DescribeEnvironmentsResult']['Environments']
+        if environments:
+            status = environments[0]['Status']
+            print status
     if status == 'Ready':
-        print "Application is ready"
+        print "Environment ready!"
     else:
-        print "WARNING - application has status %s" % status
+        print "WARNING - env is state %s" % status
 
 # Converts an availability zone
 def get_location(region):
