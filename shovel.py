@@ -103,6 +103,7 @@ def wait_for_app(eb_client, app_name, version_label):
         print "Environment ready!"
     else:
         print "WARNING - env is state %s" % status
+        sys.exit(1)
 
 # Converts an availability zone
 def get_location(region):
