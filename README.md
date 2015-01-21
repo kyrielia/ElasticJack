@@ -1,10 +1,13 @@
 About ElasticJack
 ===
 
-ElasticJack is a Python script built on top of [Boto](https://github.com/boto/boto) and 
-[Shovel](https://github.com/seomoz/shovel) to allow easy deployment of applications onto AWS Elastic Beanstalk. 
-The script uploads a deployable (e.g. a war file) to Amazon S3 and then creates/updates the environment for the 
-application based on a given YAML configuration.
+ElasticJack is a collection of Python scripts built on top of [Boto](https://github.com/boto/boto) and
+[Shovel](https://github.com/seomoz/shovel) to allow easy management of applications on AWS Elastic Beanstalk.
+
+The deploy script allows a deployable (e.g. a war file) to be deployed to Amazon S3, and then creates/updates
+the environment for the application based on a given YAML configuration.
+
+The terminate script terminates an ElasticBeanstalk environment based on a given YAML configuration.
 
 Setup
 ===
@@ -64,3 +67,7 @@ Using
 To upload a file to AWS, run the following command:
 
 ```shovel deploy <yamlFilePath> <deployableFilePath>```
+
+To terminate an environment:
+
+```shovel terminate <yamlFilePath>```
