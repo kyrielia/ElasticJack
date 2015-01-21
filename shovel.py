@@ -9,6 +9,7 @@ from boto.s3.connection import Location
 
 @task
 def deploy(yaml_path, war_path):
+    # Get settings from yaml file
     settings = load_yaml(yaml_path)
     app_name = settings['appName']
     region = settings['region']
@@ -30,12 +31,14 @@ def deploy(yaml_path, war_path):
         print "Could not find application '%s' - creating application" % app_name
         deploy_app(eb_client, app_name, version_label, s3_bucket, s3_key, True)
         create_env(eb_client, app_name, env_name, c_name, version_label, config_template)
+    # Wait for app to confirm that it has deployed or failed to deploy before exiting script
     wait_for_app(eb_client, app_name, version_label)
 
 def load_yaml(yaml_path):
-    now = datetime.now().strftime('%Y%m%d%H%M%S')
     file = open(yaml_path, "r")
     doc = str(yaml.load(file))
+    # Insert current timestamp for any occurrences of '$now' in yaml config
+    now = datetime.now().strftime('%Y%m%d%H%M%S')
     doc = doc.replace('$now', now)
     print doc
     return yaml.load(doc)
@@ -105,7 +108,7 @@ def wait_for_app(eb_client, app_name, version_label):
         print "WARNING - env is state %s" % status
         sys.exit(1)
 
-# Converts an availability zone
+# Converts an availability zone to a location
 def get_location(region):
     if region == "ap-northeast-1":
         return Location.APNortheast
