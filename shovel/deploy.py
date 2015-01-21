@@ -2,14 +2,12 @@ import boto
 import boto.beanstalk
 import sys
 import time
-import yaml
-from datetime import datetime
 from shovel import task
 from boto.s3.connection import Location
+from yamlUtil import load_yaml
 
 @task
 def deploy(yaml_path, war_path):
-    # Get settings from yaml file
     settings = load_yaml(yaml_path)
     app_name = settings['appName']
     region = settings['region']
@@ -33,15 +31,6 @@ def deploy(yaml_path, war_path):
         create_env(eb_client, app_name, env_name, c_name, version_label, config_template)
     # Wait for app to confirm that it has deployed or failed to deploy before exiting script
     wait_for_app(eb_client, app_name, version_label)
-
-def load_yaml(yaml_path):
-    file = open(yaml_path, "r")
-    doc = str(yaml.load(file))
-    # Insert current timestamp for any occurrences of '$now' in yaml config
-    now = datetime.now().strftime('%Y%m%d%H%M%S')
-    doc = doc.replace('$now', now)
-    print doc
-    return yaml.load(doc)
 
 def upload_to_s3(file, bucket_name, key_name, region):
     print "Uploading file %s to Amazon S3 bucket '%s' in region '%s'" % (file, bucket_name, region)
