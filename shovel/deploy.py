@@ -4,7 +4,7 @@ import sys
 import time
 from shovel import task
 from boto.s3.connection import Location
-from yaml_util import load_yaml
+from yamlUtil import load_yaml
 
 @task
 def deploy(yaml_path, war_path):

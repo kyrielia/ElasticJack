@@ -2,7 +2,7 @@ import boto
 import sys
 import time
 from shovel import task
-from yaml_util import load_yaml
+from yamlUtil import load_yaml
 
 @task
 def terminate(yaml_path):
