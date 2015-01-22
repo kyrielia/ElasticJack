@@ -4,7 +4,7 @@ import sys
 import time
 from shovel import task
 from boto.s3.connection import Location
-from yamlUtil import load_yaml
+from yaml_util import load_yaml
 
 @task
 def deploy(yaml_path, war_path):
@@ -90,11 +90,10 @@ def wait_for_app(eb_client, app_name, version_label):
         environments = response['DescribeEnvironmentsResponse']['DescribeEnvironmentsResult']['Environments']
         if environments:
             status = environments[0]['Status']
-            print status
     if status == 'Ready':
         print "Environment ready!"
     else:
-        print "WARNING - env is state %s" % status
+        print "ERROR - env is state %s" % status
         sys.exit(1)
 
 # Converts an availability zone to a location
