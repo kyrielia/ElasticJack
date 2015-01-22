@@ -16,14 +16,18 @@ def terminate(yaml_path):
         eb_client.terminate_environment(environment_name=env_name)
         wait_for_termination(eb_client, env_name)
     else:
-        print "Environment '%s' does not exist" % env_name
         sys.exit(1)
 
 def environment_exists(eb_client, env_name):
-    response = eb_client.describe_environments(environment_names=[env_name])
-    if response['DescribeEnvironmentsResponse']['DescribeEnvironmentsResult']['Environments']:
-        return True
+    environments = get_environments(eb_client, env_name)
+    if environments:
+        if environments[0]["Status"] == "Ready":
+            return True
+        else:
+            print "Cancelling termination - environment '%s' exists, but not in ready state" % env_name
+            return False
     else:
+        print "Environment '%s' does not exist" % env_name
         return False
 
 def wait_for_termination(eb_client, env_name):
@@ -32,12 +36,15 @@ def wait_for_termination(eb_client, env_name):
     while status == 'Terminating':
         print "..."
         time.sleep(5)
-        response = eb_client.describe_environments(environment_names=[env_name])
-        environments = response['DescribeEnvironmentsResponse']['DescribeEnvironmentsResult']['Environments']
+        environments = get_environments(eb_client, env_name)
         if environments:
             status = environments[0]['Status']
     if status == 'Terminated':
         print "Environment terminated!"
     else:
         print "ERROR - env is state %s" % status
-        sys.exit(1)
+        # sys.exit(1)
+
+def get_environments(eb_client, env_name):
+    response = eb_client.describe_environments(environment_names=[env_name])
+    return response['DescribeEnvironmentsResponse']['DescribeEnvironmentsResult']['Environments']
