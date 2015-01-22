@@ -11,16 +11,20 @@ def terminate(yaml_path):
     env_name = settings['environmentName']
 
     eb_client = boto.beanstalk.connect_to_region(region)
-    # if environment_exists(eb_client, env_name):
-    print "Terminating environment '%s'" % env_name
-    eb_client.terminate_environment(environment_name=env_name)
-    wait_for_termination(eb_client, env_name)
-    # else:
-    #     print "Environment '%s' does not exist" % env_name
-    #     sys.exit(1)
+    if environment_exists(eb_client, env_name):
+        print "Terminating environment '%s'" % env_name
+        eb_client.terminate_environment(environment_name=env_name)
+        wait_for_termination(eb_client, env_name)
+    else:
+        print "Environment '%s' does not exist" % env_name
+        sys.exit(1)
 
-# def environment_exists(eb_client, env_name):
-#     eb_client.describe_environments()
+def environment_exists(eb_client, env_name):
+    response = eb_client.describe_environments(environment_names=[env_name])
+    if response['DescribeEnvironmentsResponse']['DescribeEnvironmentsResult']['Environments']:
+        return True
+    else:
+        return False
 
 def wait_for_termination(eb_client, env_name):
     print "Waiting for environment to terminate"
