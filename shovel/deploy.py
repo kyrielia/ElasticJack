@@ -3,11 +3,11 @@ import boto.beanstalk
 import sys
 import time
 import colorama
+import environmentUtil
 from shovel import task
 from boto.s3.connection import Location
 from colorama import Fore
 from yamlUtil import load_yaml
-from environmentUtil import *
 
 @task
 def deploy(yaml_path, war_path):
@@ -34,7 +34,7 @@ def deploy(yaml_path, war_path):
         else:
             print "Could not find application '%s' - creating application" % app_name
             deploy_app(eb_client, app_name, version_label, s3_bucket, s3_key, True)
-            create_environment(eb_client, app_name, env_name, c_name, version_label, config_template)
+            environmentUtil.create_environment(eb_client, app_name, env_name, c_name, version_label, config_template)
         # Wait for app to confirm that it has deployed or failed to deploy before exiting script
         wait_for_app(eb_client, app_name, version_label)
     else:
@@ -86,7 +86,7 @@ def update_app(eb_client, env_name, version_label, template_name):
 
 # Returns True if an environment is terminating, else False
 def is_environment_terminating(eb_client, env_name):
-    environment = get_environment(eb_client, env_name=env_name)
+    environment = environmentUtil.get_environment(eb_client, env_name=env_name)
     if environment:
         status = environment['Status']
         if status == "Terminating":
@@ -106,7 +106,7 @@ def wait_for_app(eb_client, app_name, version_label):
     while status == 'Pending' or status == 'Launching' or status == 'Updating':
         print "..."
         time.sleep(5)
-        environment = get_environment(eb_client, app_name=app_name, version_label=version_label)
+        environment = environmentUtil.get_environment(eb_client, app_name=app_name, version_label=version_label)
         if environment:
             status = environment['Status']
     if status == 'Ready':
