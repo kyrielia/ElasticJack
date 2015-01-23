@@ -9,7 +9,9 @@ from shovel import task
 from boto.s3.connection import Location
 from colorama import Fore
 
+# Hack to get around ImportErrors caused by how Shovel finds its tasks
 yaml_util = imp.load_source('yamlUtil', os.path.join(os.path.dirname(__file__), '.', './yaml_util.py'))
+environment_util = imp.load_source('environmentUtil', os.path.join(os.path.dirname(__file__), '.', './environment_util.py'))
 
 @task
 def deploy(yaml_path, war_path):
@@ -110,20 +112,6 @@ def is_environment_terminating(eb_client, env_name):
     else:
         print "Environment '%s' does not exist" % env_name
         return False
-
-# Returns the description of a single environment
-def get_environment(eb_client, env_name=None, app_name=None, version_label=None):
-    if env_name:
-        env_name = [env_name]
-    response = eb_client.describe_environments(
-        application_name=app_name,
-        version_label=version_label,
-        environment_names=env_name)
-    environments = response['DescribeEnvironmentsResponse']['DescribeEnvironmentsResult']['Environments']
-    if environments:
-        return environments[0]
-    else:
-        return None
 
 # Waits for the application to be launched
 def wait_for_app(eb_client, app_name, version_label):
