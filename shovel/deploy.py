@@ -100,7 +100,7 @@ def create_environment(eb_client, app_name, env_name, c_name, version_label, tem
 
 # Returns True if an environment is terminating, else False
 def is_environment_terminating(eb_client, env_name):
-    environment = get_environment(eb_client, env_name=env_name)
+    environment = environment_util.get_environment(eb_client, env_name=env_name)
     if environment:
         status = environment['Status']
         if status == "Terminating":
@@ -120,7 +120,7 @@ def wait_for_app(eb_client, app_name, version_label):
     while status == 'Pending' or status == 'Launching' or status == 'Updating':
         print "..."
         time.sleep(5)
-        environment = get_environment(eb_client, app_name=app_name, version_label=version_label)
+        environment = environment_util.get_environment(eb_client, app_name=app_name, version_label=version_label)
         if environment:
             status = environment['Status']
     if status == 'Ready':

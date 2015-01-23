@@ -34,7 +34,7 @@ def wait_for_termination(eb_client, env_name):
     while status == 'Terminating':
         print "..."
         time.sleep(5)
-        environment = get_environment(eb_client, env_name=env_name)
+        environment = environment_util.get_environment(eb_client, env_name=env_name)
         if environment:
             status = environment['Status']
     if status == 'Terminated':
@@ -45,7 +45,7 @@ def wait_for_termination(eb_client, env_name):
 
 # Return True if environment has Ready status, else False
 def is_environment_ready(eb_client, env_name):
-    environment = get_environment(eb_client, env_name=env_name)
+    environment = environment_util.get_environment(eb_client, env_name=env_name)
     if environment:
         status = environment["Status"]
         if status == "Ready":
