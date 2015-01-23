@@ -1,12 +1,16 @@
 import boto
 import sys
 import time
+import colorama
+from colorama import Fore
 from shovel import task
 from yamlUtil import load_yaml
 from environmentUtil import *
 
 @task
 def terminate(yaml_path):
+    colorama.init(autoreset=True)
+
     settings = load_yaml(yaml_path)
     region = settings['region']
     env_name = settings['environmentName']
@@ -43,8 +47,8 @@ def is_environment_ready(eb_client, env_name):
         if status == "Ready":
             return True
         else:
-            print "Cancelling termination. Environment '%s' exists in state '%s'." % (env_name, status)
-            print "To terminate an environment, it must have status 'Ready'"
+            print Fore.RED + "Cancelling termination. Environment '%s' exists in state '%s'." % (env_name, status)
+            print Fore.RED + "To terminate an environment, it must have status 'Ready'"
             return False
     else:
         print "Environment '%s' does not exist" % env_name

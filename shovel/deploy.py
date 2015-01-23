@@ -2,13 +2,17 @@ import boto
 import boto.beanstalk
 import sys
 import time
+import colorama
 from shovel import task
 from boto.s3.connection import Location
+from colorama import Fore
 from yamlUtil import load_yaml
 from environmentUtil import *
 
 @task
 def deploy(yaml_path, war_path):
+    colorama.init(autoreset=True)
+
     settings = load_yaml(yaml_path)
     app_name = settings['appName']
     region = settings['region']
@@ -86,8 +90,8 @@ def is_environment_terminating(eb_client, env_name):
     if environment:
         status = environment['Status']
         if status == "Terminating":
-            print "Cancelling deployment. Environment '%s' exists in state '%s'." % (env_name, status)
-            print "To deploy an environment, it must be have status 'Ready' or not exist"
+            print Fore.RED + "Cancelling deployment. Environment '%s' exists in state '%s'." % (env_name, status)
+            print Fore.RED + "To deploy an environment, it must be have status 'Ready' or not exist"
             return True
         else:
             return False

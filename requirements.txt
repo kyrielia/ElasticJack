@@ -1,3 +1,4 @@
 boto==2.35.2
 shovel==0.3.0
 pyyaml==3.11
+colorama==0.3.3
