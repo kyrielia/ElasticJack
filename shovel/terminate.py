@@ -2,7 +2,7 @@ import boto
 import sys
 import time
 import colorama
-import environmentUtil
+import yenvironmentUtil
 from colorama import Fore
 from shovel import task
 from yamlUtil import load_yaml
@@ -30,7 +30,7 @@ def wait_for_termination(eb_client, env_name):
     while status == 'Terminating':
         print "..."
         time.sleep(5)
-        environment = environmentUtil.get_environment(eb_client, env_name=env_name)
+        environment = yenvironmentUtil.get_environment(eb_client, env_name=env_name)
         if environment:
             status = environment['Status']
     if status == 'Terminated':
@@ -41,7 +41,7 @@ def wait_for_termination(eb_client, env_name):
 
 # Return True if environment has Ready status, else False
 def is_environment_ready(eb_client, env_name):
-    environment = environmentUtil.get_environment(eb_client, env_name=env_name)
+    environment = yenvironmentUtil.get_environment(eb_client, env_name=env_name)
     if environment:
         status = environment["Status"]
         if status == "Ready":
