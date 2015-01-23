@@ -1,7 +1,8 @@
+.idea/
+env/
 .project
 .pydevproject
 *.iml
-.idea/
 *.yaml
 *.pyc
-env/
+*.war
