@@ -21,10 +21,12 @@ def terminate(yaml_path):
 def environment_exists(eb_client, env_name):
     environments = get_environments(eb_client, env_name)
     if environments:
-        if environments[0]["Status"] == "Ready":
+        status = environments[0]["Status"]
+        if status == "Ready":
             return True
         else:
-            print "Cancelling termination - environment '%s' exists, but not in ready state" % env_name
+            print "Cancelling termination. Environment '%s' exists in state '%s'." % (env_name, status)
+            print "To terminate an environment, it must be in state 'Ready'"
             return False
     else:
         print "Environment '%s' does not exist" % env_name
