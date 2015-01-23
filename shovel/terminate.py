@@ -2,7 +2,6 @@ import boto
 import sys
 import time
 import colorama
-import environmentUtil
 from colorama import Fore
 from shovel import task
 from yamlUtil import load_yaml
@@ -30,7 +29,7 @@ def wait_for_termination(eb_client, env_name):
     while status == 'Terminating':
         print "..."
         time.sleep(5)
-        environment = environmentUtil.get_environment(eb_client, env_name=env_name)
+        environment = get_environment(eb_client, env_name=env_name)
         if environment:
             status = environment['Status']
     if status == 'Terminated':
@@ -41,7 +40,7 @@ def wait_for_termination(eb_client, env_name):
 
 # Return True if environment has Ready status, else False
 def is_environment_ready(eb_client, env_name):
-    environment = environmentUtil.get_environment(eb_client, env_name=env_name)
+    environment = get_environment(eb_client, env_name=env_name)
     if environment:
         status = environment["Status"]
         if status == "Ready":
@@ -53,3 +52,17 @@ def is_environment_ready(eb_client, env_name):
     else:
         print "Environment '%s' does not exist" % env_name
         return False
+
+# Returns the description of a single environment
+def get_environment(eb_client, env_name=None, app_name=None, version_label=None):
+    if env_name:
+        env_name = [env_name]
+    response = eb_client.describe_environments(
+        application_name=app_name,
+        version_label=version_label,
+        environment_names=env_name)
+    environments = response['DescribeEnvironmentsResponse']['DescribeEnvironmentsResult']['Environments']
+    if environments:
+        return environments[0]
+    else:
+        return None

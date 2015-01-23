@@ -3,7 +3,6 @@ import boto.beanstalk
 import sys
 import time
 import colorama
-import environmentUtil
 from shovel import task
 from boto.s3.connection import Location
 from colorama import Fore
@@ -34,7 +33,7 @@ def deploy(yaml_path, war_path):
         else:
             print "Could not find application '%s' - creating application" % app_name
             deploy_app(eb_client, app_name, version_label, s3_bucket, s3_key, True)
-            environmentUtil.create_environment(eb_client, app_name, env_name, c_name, version_label, config_template)
+            create_environment(eb_client, app_name, env_name, c_name, version_label, config_template)
         # Wait for app to confirm that it has deployed or failed to deploy before exiting script
         wait_for_app(eb_client, app_name, version_label)
     else:
@@ -84,9 +83,19 @@ def update_app(eb_client, env_name, version_label, template_name):
         version_label=version_label,
         template_name=template_name)
 
+# Creates an Elastic Beanstalk environment using the given parameters
+def create_environment(eb_client, app_name, env_name, c_name, version_label, template_name):
+    print "Creating environment '%s'" % env_name
+    eb_client.create_environment(
+        app_name,
+        env_name,
+        cname_prefix=c_name,
+        version_label=version_label,
+        template_name=template_name)
+
 # Returns True if an environment is terminating, else False
 def is_environment_terminating(eb_client, env_name):
-    environment = environmentUtil.get_environment(eb_client, env_name=env_name)
+    environment = get_environment(eb_client, env_name=env_name)
     if environment:
         status = environment['Status']
         if status == "Terminating":
@@ -99,6 +108,20 @@ def is_environment_terminating(eb_client, env_name):
         print "Environment '%s' does not exist" % env_name
         return False
 
+# Returns the description of a single environment
+def get_environment(eb_client, env_name=None, app_name=None, version_label=None):
+    if env_name:
+        env_name = [env_name]
+    response = eb_client.describe_environments(
+        application_name=app_name,
+        version_label=version_label,
+        environment_names=env_name)
+    environments = response['DescribeEnvironmentsResponse']['DescribeEnvironmentsResult']['Environments']
+    if environments:
+        return environments[0]
+    else:
+        return None
+
 # Waits for the application to be launched
 def wait_for_app(eb_client, app_name, version_label):
     print "Waiting for application to start"
@@ -106,7 +129,7 @@ def wait_for_app(eb_client, app_name, version_label):
     while status == 'Pending' or status == 'Launching' or status == 'Updating':
         print "..."
         time.sleep(5)
-        environment = environmentUtil.get_environment(eb_client, app_name=app_name, version_label=version_label)
+        environment = get_environment(eb_client, app_name=app_name, version_label=version_label)
         if environment:
             status = environment['Status']
     if status == 'Ready':
@@ -142,3 +165,4 @@ def get_location(region):
 def percent_complete(complete, total):
     sys.stdout.write(".")
     sys.stdout.flush()
+
