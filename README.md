@@ -64,7 +64,7 @@ E.g. If ran at 31/12/14 23:59:59, 's3Key: deploy-$now.war' becomes 's3Key: deplo
 Using
 ===
 
-To upload a file to AWS, run the following command:
+To upload a file to AWS and to create/update an environment, run the following command:
 
 ```shovel deploy <yamlFilePath> <deployableFilePath>```
 
