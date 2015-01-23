@@ -1,6 +1,7 @@
 import yaml
 from datetime import datetime
 
+# Loads the given yaml
 def load_yaml(yaml_path):
     file = open(yaml_path, "r")
     doc = str(yaml.load(file))
