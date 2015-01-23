@@ -2,15 +2,18 @@ import boto
 import sys
 import time
 import colorama
+import imp
+import os
 from colorama import Fore
 from shovel import task
-from yamlUtil import load_yaml
+
+yaml_util = imp.load_source('yamlUtil', os.path.join(os.path.dirname(__file__), '.', './yaml_util.py'))
 
 @task
 def terminate(yaml_path):
     colorama.init(autoreset=True)
 
-    settings = load_yaml(yaml_path)
+    settings = yaml_util.load_yaml(yaml_path)
     region = settings['region']
     env_name = settings['environmentName']
 

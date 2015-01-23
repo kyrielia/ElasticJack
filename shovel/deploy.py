@@ -1,18 +1,21 @@
 import boto
 import boto.beanstalk
 import sys
+import os
+import imp
 import time
 import colorama
 from shovel import task
 from boto.s3.connection import Location
 from colorama import Fore
-from yamlUtil import load_yaml
+
+yaml_util = imp.load_source('yamlUtil', os.path.join(os.path.dirname(__file__), '.', './yaml_util.py'))
 
 @task
 def deploy(yaml_path, war_path):
     colorama.init(autoreset=True)
 
-    settings = load_yaml(yaml_path)
+    settings = yaml_util.load_yaml(yaml_path)
     app_name = settings['appName']
     region = settings['region']
     s3_bucket = settings['s3Bucket']
