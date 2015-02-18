@@ -7,6 +7,7 @@ import time
 import colorama
 from shovel import task
 from boto.s3.connection import Location
+from boto.s3.lifecycle import Lifecycle, Expiration
 from colorama import Fore
 
 # Hack to get around ImportErrors caused by how Shovel finds its tasks
@@ -26,11 +27,14 @@ def deploy(yaml_path, war_path):
     env_name = settings['environmentName']
     c_name = settings['cName']
     config_template = settings['configTemplate']
+    expiration_path = settings['expirationPath']
+    days_to_expiration = settings['daysToExpiration']
 
     eb_client = boto.beanstalk.connect_to_region(region)
 
     if not is_environment_terminating(eb_client, env_name):
-        upload_to_s3(war_path, s3_bucket, s3_key, region)
+        lifecycle = get_lifecycle(expiration_path, days_to_expiration)
+        upload_to_s3(war_path, s3_bucket, s3_key, region, lifecycle)
         if application_exists(eb_client, c_name):
             print "Application '%s' already exists - attempting update" % app_name
             deploy_app(eb_client, app_name, version_label, s3_bucket, s3_key, False)
@@ -44,13 +48,26 @@ def deploy(yaml_path, war_path):
     else:
         sys.exit(1)
 
+# Set a lifecycle policy on the bucket if the daysToExpiration property is assigned
+def get_lifecycle(expiration_path, days_to_expiration):
+    if days_to_expiration is not None and expiration_path is not None:
+        lifecycle = Lifecycle()
+        print "Adding expiration rule of %s days for S3 path %s" % (days_to_expiration, expiration_path)
+        lifecycle.add_rule('expirationrule', prefix=expiration_path, status='Enabled', expiration=Expiration(days=int(days_to_expiration)))
+        return lifecycle
+    else:
+        print "No expiration rule added"
+        return None
+
 # Uploads the given file to the given S3 bucket
-def upload_to_s3(file, bucket_name, key_name, region):
+def upload_to_s3(file, bucket_name, key_name, region, lifecycle):
     print "Uploading file %s to Amazon S3 bucket '%s' in region '%s'" % (file, bucket_name, region)
     bucket = get_or_create_bucket(bucket_name, region)
     key = boto.s3.key.Key(bucket)
     key.key = key_name
     key.set_contents_from_filename(file, cb=percent_complete, num_cb=10)
+    if lifecycle is not None:
+        bucket.configure_lifecycle(lifecycle)
 
 # Gets an S3 bucket. Creates the S3 bucket if it does not exist
 def get_or_create_bucket(bucket_name, region):
