@@ -61,6 +61,11 @@ The yaml file can also include a keyword '$now'. The deployer will automatically
 
 E.g. If ran at 31/12/14 23:59:59, 's3Key: deploy-$now.war' becomes 's3Key: deploy-20143112235959.war'
 
+The following settings are optional:
+
+* daysToExpiration - for lifecycle rules on a bucket. Sets the number of days until expiration
+* expirationPath - for lifecycle rules. Sets the rule target.
+
 Using
 ===
 
