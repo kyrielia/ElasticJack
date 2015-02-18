@@ -1,0 +1,39 @@
+# --------
+# REQUIRED
+# --------
+
+# the name of your application
+appName: MyApp
+
+# the region you are uploading to
+region: eu-west-1
+
+# the name of the s3 bucket you are uploading to
+s3Bucket: s3bucket
+
+# usually the war file or deployable you are uploading
+s3Key: s3Key
+
+# $now will be replaced with current timestamp
+versionLabel: $now
+
+# the name of the environment
+environmentName: myenv
+
+# your CloudFront alternate domain name
+cName: mycname
+
+# your configuration template name
+configTemplate: myconfigtemplate
+
+# --------
+# OPTIONAL
+# --------
+
+# for lifecycle rules, the number of days before objects in the expiration path are deleted
+# must be used in conjunction with expirationPath setting
+daysToExpiration: 1
+
+# the rule target path for lifecycle rules
+# must be used in conjunction with the daysToExpiration setting
+expirationPath: NitroAodFeedConverter/
