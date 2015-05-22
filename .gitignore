@@ -1,9 +1,13 @@
+# Folders
 .idea/
 env/
 .project
 .pydevproject
+
+# File wildcards
 *.iml
 *.yaml
 *.pyc
 *.war
 !example.yaml
+*~
