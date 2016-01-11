@@ -137,7 +137,7 @@ def wait_for_app(eb_client, app_name, version_label):
     while status == 'Pending' or status == 'Launching' or status == 'Updating':
         print "..."
         time.sleep(5)
-        environment = environment_util.get_environment(eb_client, app_name=app_name, version_label=version_label)
+        environment = environment_util.get_environment(eb_client, app_name=app_name)
         if environment and environment['VersionLabel'] == version_label:
             status = environment['Status']
     if status == 'Ready':
